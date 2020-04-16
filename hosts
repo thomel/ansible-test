@@ -1,2 +1,8 @@
 [virtsr]
 vm01.mgmt.thme.me
+
+[ubeta]
+10.200.0.152 ansible_python_interpreter=/usr/bin/python3
+
+[ubnsr]
+10.200.0.153
