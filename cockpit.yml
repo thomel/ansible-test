@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: "Update apt cache"
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+  tasks:
+    - name: "Install Cockpit" # Add this to commen
+      apt: name=cockpit state=present
+- hosts: virtsr
+  become: true
+  tasks: 
+    - name: "Install Cockpit VM modul"
+      apt: name=cockpit-machines state=present

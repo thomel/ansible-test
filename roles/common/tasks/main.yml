@@ -1,0 +1,6 @@
+---
+# tasks file for common
+- name: "Install Cockpit"
+  apt: 
+    name: cockpit
+    state: present
