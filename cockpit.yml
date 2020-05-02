@@ -14,3 +14,7 @@
   tasks: 
     - name: "Install Cockpit VM modul"
       apt: name=cockpit-machines state=present
+- hosts: ubnsr
+  become: true
+  roles:
+    - test

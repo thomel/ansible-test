@@ -1,0 +1,17 @@
+---
+# handlers file for librenms
+- name: update cache
+  apt: 
+    update_cache: yes
+- name: restart mysql
+  service:
+    name: mysql
+    state: restarted
+- name: restart apache2
+  service: 
+    name: apache2 
+    state: restarted
+- name: restart snmpd
+  service:
+    name: snmpd
+    state: restarted

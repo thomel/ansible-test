@@ -1,0 +1,11 @@
+---
+# defaults file for librenms
+# SNMP community string
+snmp_string: Evo20LAN20
+
+# SNMP location: Rack, Room, Building, City, Country [GPSX,Y]
+server_location: Styre
+
+# SNMP contact: Your Name <your@email.address>
+sys_contact: Thomas Meling <thomas@evo-lan.org>
+

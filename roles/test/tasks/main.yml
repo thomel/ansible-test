@@ -1,0 +1,73 @@
+- name: "Edit 50-server.cnf"
+  blockinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    insertafter: '^\[mysqld]'
+    block: |
+      innodb_file_per_table=1
+      lower_case_table_names=0
+  notify:
+    - restart mysql
+
+- name: Set date.timezone for FPM
+  lineinfile:
+    dest: /etc/php/7.2/cli/php.ini
+    regexp: "date.timezone ="
+    line: "date.timezone = Europe/Oslo"
+
+- name: "Set date.timezone for apache2"
+  lineinfile:
+    dest: /etc/php/7.2/apache2/php.ini
+    regexp: "date.timezone ="
+    line: "date.timezone = Europe/Oslo"
+
+- name: "Disable Apache2 module mpm_event"
+  apache2_module:
+    state: absent
+    name: mpm_event
+
+- name: "Enable Apache2 module php7.2 and mpm_prefork"
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - php7.2
+    - mpm_prefork
+
+- name: Copy file with owner and permission, using symbolic representation
+  copy:
+    src: librenms.conf
+    dest: /etc/apache2/sites-available/librenms.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: a2ensite librenms
+  command: a2ensite librenms.conf
+  args:
+    creates: /etc/apache2/sites-enabled/librenms.conf
+  notify:
+  - restart apache2
+
+- name: a2dissite 000-default
+  command: a2dissite 000-default
+  args:
+    removes: /etc/apache2/sites-enabled/000-default.conf
+  notify:
+  - restart apache2
+
+- name: Template a file to /etc/files.conf
+  template:
+    src: snmpd.conf.j2
+    dest: /etc/snmp/snmpd.conf
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: "Download distro"
+  get_url:
+    url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/distro
+    dest: /usr/bin/distro
+    mode: a+x
+  notify:
+  - restart snmpd
